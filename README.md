@@ -10,7 +10,7 @@ Use releases binaries or ```go get -u github.com/rif/telegraf-freeswitch```
 ```
 [[inputs.exec]]
   ## Commands array
-  commands = ["/usr/local/bin/telegraf -host 127.0.0.1 -port 8021 -pass ClueCon"]
+  commands = ["/usr/local/bin/telegraf-freeswitch -host 127.0.0.1 -port 8021 -pass ClueCon"]
 
   ## Timeout for each command to complete.
   timeout = "5s"
