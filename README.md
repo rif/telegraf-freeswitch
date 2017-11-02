@@ -3,7 +3,7 @@
 Collects active calls, sessions globally and per sip profiles and sends them to telegraf
 
 ## Install
-Use releases binaries or ```go get -u github.com/rif/telegraf-freeswitch```
+Use [releases binaries](https://github.com/rif/telegraf-freeswitch/releases) or ```go get -u github.com/rif/telegraf-freeswitch```
 
 ## Telegraf configuration
 
