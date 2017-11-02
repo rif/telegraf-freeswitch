@@ -1,0 +1,13 @@
+language: go
+
+go:
+  - 1.9
+
+install:
+  - go get github.com/golang/dep/cmd/dep
+  - dep ensure
+
+script: go test ./...
+
+branches:
+  only: master
