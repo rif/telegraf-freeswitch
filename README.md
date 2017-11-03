@@ -1,8 +1,23 @@
 # Telegraf Freeswitch Plugin
 
-Collects active calls, sessions globally and per sip profiles and sends them to telegraf
+Collects status data from Freeswitch and makes it available for telegraf.
+
+The collected data include:
+
+- Sessions
+  - active sessions
+  - peak and peak5min
+  - total
+- Rate
+  - current
+  - max
+  - peak and peak5min
+- Running sessions per Sofia Sip Profiles
+
 
 ## Install
+telegraf-freeswitch is a stand-alone binary with no dependencies. Just copy it on your system and run it.
+
 Use [releases binaries](https://github.com/rif/telegraf-freeswitch/releases) or ```go get -u github.com/rif/telegraf-freeswitch```
 
 ## Telegraf configuration
@@ -34,3 +49,7 @@ freeswitch_profile_sessions,profile=dot49,ip=80.161.218.49 running=169
 freeswitch_profile_sessions,profile=external,ip=80.161.218.17 running=988
 freeswitch_profile_sessions,profile=dot50,ip=80.161.218.50 running=155
 ```
+
+### Similar plugins
+- [Telegraf plugin for FreeSWITCH ](https://github.com/areski/freeswitch-telegraf-plugin)
+- [FreeSWITCH Metric Collection with Telegraf](https://github.com/moises-silva/freeswitch-telegraf)
