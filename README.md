@@ -1,4 +1,5 @@
 # Telegraf Freeswitch Plugin
+[![Build Status](https://travis-ci.org/rif/telegraf-freeswitch.svg?branch=master)](https://travis-ci.org/rif/telegraf-freeswitch)
 
 Collects status data from Freeswitch and makes it available for telegraf.
 
