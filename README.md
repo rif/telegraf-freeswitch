@@ -23,6 +23,16 @@ Use [releases binaries](https://github.com/rif/telegraf-freeswitch/releases) or 
 
 ## Telegraf configuration
 
+There are two operation modes for telegraf-freeswitch: on shot and server.
+
+In one shot telegraf will start the plugin process which will connect to freeswitch via eventsocket get the status and profiles information and exit.
+
+In server mode the plugin is started externally, connects to freeswitch and stays connected responding to http GET request from telegraf. This server mode is slightly more complicated to set up but it might be more efficient then the one shot mode.
+
+Basically the server mode replaces the starting of the plugin process and freeswitch connection by an http GET request. However there are no measurements of how much of an optimization this is.
+
+## One shot mode
+
 ```
 [[inputs.exec]]
   ## Commands array
@@ -49,6 +59,79 @@ freeswitch_profile_sessions,profile=dot47,ip=80.161.218.47 running=177
 freeswitch_profile_sessions,profile=dot49,ip=80.161.218.49 running=169
 freeswitch_profile_sessions,profile=external,ip=80.161.218.17 running=988
 freeswitch_profile_sessions,profile=dot50,ip=80.161.218.50 running=155
+```
+
+## Server mode
+
+```
+## Read flattened metrics from one or more JSON HTTP endpoints
+[[inputs.httpjson]]
+name_override = "freeswitch_sessions"
+## URL of each server in the service's cluster
+servers = [
+  "http://localhost:9191/status/",
+]
+
+
+[[inputs.httpjson]]
+name_override = "freeswitch_profiles_sessions"
+## URL of each server in the service's cluster
+servers = [
+  "http://localhost:9191/profiles/",
+]
+## List of tag names to extract from top-level of JSON server response
+tag_keys = [
+  "profile",
+  "ip"
+]
+```
+
+Copy telegraf-freeswitch.service in /etc/systemd/system/ folder and run ```systemctl daemon-reload``` command to load the newly added file.
+
+After that use the usual systemctl start/stop/restart telegraf-freeswitch.service commands to controll the telegraf-freeswitch server.
+
+###Example Output
+```
+$ curl http://localhost:9191/status/
+{
+ "active": 53,
+ "peak": 54,
+ "peak_5min": 54,
+ "total": 114,
+ "rate_current": 3,
+ "rate_max": 300,
+ "rate_peak": 3,
+ "rate_peak_5min": 3
+}
+
+$ curl http://localhost:9191/profiles/
+[
+ {
+  "name": "dot3",
+  "ip": "80.161.218.3",
+  "running": "19"
+ },
+ {
+  "name": "dot4",
+  "ip": "80.161.218.4",
+  "running": "10"
+ },
+ {
+  "name": "external",
+  "ip": "80.161.218.2",
+  "running": "15"
+ },
+ {
+  "name": "dot5",
+  "ip": "80.161.218.5",
+  "running": "14"
+ },
+ {
+  "name": "dot6",
+  "ip": "80.161.218.6",
+  "running": "14"
+ }
+]
 ```
 
 ### Similar plugins

@@ -1,0 +1,11 @@
+[Unit]
+Description=telegraf freeswitch plugin
+
+[Service]
+ExecStart=/usr/local/bin/telegraf-freeswitch -serve &
+ExecStop=pkill telegraf-freeswitch
+SyslogIdentifier=telegraf-freeswitch
+Restart=always
+
+[Install]
+WantedBy=default.target
