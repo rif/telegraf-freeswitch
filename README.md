@@ -23,11 +23,11 @@ Use [releases binaries](https://github.com/rif/telegraf-freeswitch/releases) or 
 
 ## Telegraf configuration
 
-There are two operation modes for telegraf-freeswitch: on shot and server.
+There are two operation modes for telegraf-freeswitch: one shot and server.
 
 In one shot telegraf will start the plugin process which will connect to freeswitch via eventsocket get the status and profiles information and exit.
 
-In server mode the plugin is started externally, connects to freeswitch and stays connected responding to http GET request from telegraf. This server mode is slightly more complicated to set up but it might be more efficient then the one shot mode.
+In server mode the plugin is started externally, connects to freeswitch and stays connected responding to http GET requestd from telegraf. This server mode is slightly more complicated to set up but it might be more efficient then the one shot mode.
 
 Basically the server mode replaces the starting of the plugin process and freeswitch connection by an http GET request. However there are no measurements of how much of an optimization this is.
 
