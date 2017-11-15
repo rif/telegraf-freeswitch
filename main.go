@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/rif/go-eventsocket/eventsocket"
 	"github.com/rif/telegraf-freeswitch/utils"
 )
 
@@ -20,71 +19,53 @@ var (
 	listen_port    = flag.Int("listen_port", 9191, "listen on port")
 )
 
-func getData(conn *eventsocket.Connection) (sessions *utils.Sessions, sofiaProfiles []*utils.SofiaProfile, err error) {
-	ev, err := conn.Send(`api json {"command" : "status", "data" : ""}`)
-	if err != nil {
-		return nil, nil, fmt.Errorf("error sending status command: %v", err)
-	}
-	c, err := utils.LoadStatusJSON(ev.Body)
-	if err != nil || c.Status != "success" {
-		return nil, nil, fmt.Errorf("error parsing status command: %v %+v", err, c)
-	}
-	sessions = &c.Response.Sessions
-	ev, err = conn.Send("api sofia xmlstatus")
-	if err != nil {
-		return nil, nil, fmt.Errorf("error sending xmlstatus: %v", err)
-	}
-	sofiaProfiles, err = utils.ParseSofiaStatus(ev.Body)
-	if err != nil {
-		return nil, nil, fmt.Errorf("error parsing xmlstatus: %v", err)
-	}
-	return
-}
-
-func getOutput(sessions *utils.Sessions, sofiaProfiles []*utils.SofiaProfile) string {
-	out := fmt.Sprintf("freeswitch_sessions active=%d,peak=%d,peak_5min=%d,total=%d,rate_current=%d,rate_max=%d,rate_peak=%d,rate_peak_5min=%d\n",
-		sessions.Count.Active,
-		sessions.Count.Peak,
-		sessions.Count.Peak5min,
-		sessions.Count.Total,
-		sessions.Rate.Current,
-		sessions.Rate.Max,
-		sessions.Rate.Peak,
-		sessions.Rate.Peak5min,
-	)
-	for _, sofiaProfile := range sofiaProfiles {
-		out += fmt.Sprintf("freeswitch_profile_sessions,profile=%s,ip=%s running=%s\n",
-			sofiaProfile.Name,
-			sofiaProfile.Address,
-			sofiaProfile.Running)
-	}
-	return out
+func handler(w http.ResponseWriter, route string) {
 }
 
 func main() {
 	flag.Parse()
 	l := log.New(os.Stderr, "", 0)
-	conn, err := eventsocket.Dial(fmt.Sprintf("%s:%d", *host, *port), *pass)
+	fetcher, err := utils.NewFetcher(*host, *port, *pass)
 	if err != nil {
 		l.Print("error connecting to fs: ", err)
 	}
-	defer conn.Close()
+	defer fetcher.Close()
 	if !*serve {
-		sessions, sofiaProfiles, err := getData(conn)
+		sessions, sofiaProfiles, err := fetcher.GetData()
 		if err != nil {
 			l.Print(err.Error())
 		}
-		fmt.Print(getOutput(sessions, sofiaProfiles))
+		fmt.Print(formatOutputInflux(sessions, sofiaProfiles))
 		os.Exit(0)
 	}
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		sessions, sofiaProfiles, err := getData(conn)
+	http.HandleFunc("/status/", func(w http.ResponseWriter, r *http.Request) {
+		sessions, sofiaProfiles, err := fetcher.GetData()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		w.Write([]byte(getOutput(sessions, sofiaProfiles)))
+		w.Header().Set("Content-Type", "application/json")
+		status, _ := fetcher.FormatOutput(utils.JSONFormat)
+		if _, err := w.Write(status); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 	})
-	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%d", *listen_address, *listen_port), nil))
+
+	http.HandleFunc("/profiles/", func(w http.ResponseWriter, r *http.Request) {
+		sessions, sofiaProfiles, err := fetcher.GetData()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_, profiles := fetcher.FormatOutput(utils.JSONFormat)
+		if _, err := w.Write(profiler); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	})
+
+	listen := fmt.Sprintf("%s:%d", *listen_address, *listen_port)
+	fmt.Printf("Listening on %s...", listen)
+	log.Fatal(http.ListenAndServe(listen, nil))
 }
