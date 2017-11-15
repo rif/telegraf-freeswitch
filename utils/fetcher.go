@@ -51,11 +51,11 @@ func (f *Fetcher) Close() {
 	f.conn.Close()
 }
 
-func (f *Fetcher) GetData(conn *eventsocket.Connection) error {
+func (f *Fetcher) GetData() error {
 	if !f.cacheTime.IsZero() && time.Since(f.cacheTime) < 5*time.Second {
 		return nil
 	}
-	ev, err := conn.Send(`api json {"command" : "status", "data" : ""}`)
+	ev, err := f.conn.Send(`api json {"command" : "status", "data" : ""}`)
 	if err != nil {
 		return fmt.Errorf("error sending status command: %v", err)
 	}
@@ -64,7 +64,7 @@ func (f *Fetcher) GetData(conn *eventsocket.Connection) error {
 		return fmt.Errorf("error parsing status command: %v %+v", err, c)
 	}
 	sessions := &c.Response.Sessions
-	ev, err = conn.Send("api sofia xmlstatus")
+	ev, err = f.conn.Send("api sofia xmlstatus")
 	if err != nil {
 		return fmt.Errorf("error sending xmlstatus: %v", err)
 	}
