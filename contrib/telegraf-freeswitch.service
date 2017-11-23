@@ -4,6 +4,8 @@ Description=telegraf freeswitch plugin
 [Service]
 ExecStart=/usr/local/bin/telegraf-freeswitch -serve &
 ExecStop=pkill telegraf-freeswitch
+StandardOutput=syslog
+StandardError=syslog
 SyslogIdentifier=telegraf-freeswitch
 Restart=always
 

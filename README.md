@@ -19,7 +19,7 @@ The collected data include:
 ## Install
 telegraf-freeswitch is a stand-alone binary with no dependencies. Just copy it on your system and run it.
 
-Use [releases binaries](https://github.com/rif/telegraf-freeswitch/releases) or ```go get -u github.com/rif/telegraf-freeswitch```
+Use [released binaries](https://github.com/rif/telegraf-freeswitch/releases) or ```go get -u github.com/rif/telegraf-freeswitch```
 
 ## Telegraf configuration
 
