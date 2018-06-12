@@ -11,8 +11,8 @@ import (
 )
 
 var (
-	dataParser    = regexp.MustCompile(`^sip:mod_sofia@(.+):\d+$`)
-	runningParser = regexp.MustCompile(`^RUNNING \((\d+)\)$`)
+	dataParser    = regexp.MustCompile(`^sip:mod_sofia@(.+):\d+`)
+	runningParser = regexp.MustCompile(`^RUNNING \((\d+)\)`)
 )
 
 type Profile struct {
