@@ -84,7 +84,7 @@ func TestSofiaStatusParse(t *testing.T) {
 		t.Errorf("error extracting profiles: %+v", sofiaProfiles)
 	}
 	sp := sofiaProfiles[3]
-	if sp.Name != "external" || sp.Address != "173.244.183.138" || sp.Running != "63" {
+	if sp.Name != "external" || sp.Address != "173.244.183.138:5060" || sp.Running != "63" {
 		t.Error("error on sofia profiles correction: ", sp)
 	}
 }

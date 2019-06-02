@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	dataParser    = regexp.MustCompile(`^sip:mod_sofia@(.+):\d+`)
+	dataParser    = regexp.MustCompile(`^sip:.+?@(.+:\d+)`)
 	runningParser = regexp.MustCompile(`^RUNNING \((\d+)\)`)
 )
 
