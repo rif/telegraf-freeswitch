@@ -55,13 +55,23 @@ func (f *Fetcher) GetData() error {
 	if !f.cacheTime.IsZero() && time.Since(f.cacheTime) < 5*time.Second {
 		return nil
 	}
+	var c *Command
 	ev, err := f.conn.Send(`api json {"command" : "status", "data" : ""}`)
 	if err != nil {
+		ev, err = f.conn.Send(`api status`)
+		if err != nil {
+			return fmt.Errorf("error sending status command: %v", err)
+		}
+		c, err = LoadStatusJSON(ev.Body)
+		if err != nil || c.Status != "success" {
+			return fmt.Errorf("error parsing status command: %v %+v", err, c)
+		}
 		return fmt.Errorf("error sending status command: %v", err)
-	}
-	c, err := LoadStatusJSON(ev.Body)
-	if err != nil || c.Status != "success" {
-		return fmt.Errorf("error parsing status command: %v %+v", err, c)
+	} else {
+		c, err := LoadStatusJSON(ev.Body)
+		if err != nil || c.Status != "success" {
+			return fmt.Errorf("error parsing status command: %v %+v", err, c)
+		}
 	}
 	sessions := &c.Response.Sessions
 	ev, err = f.conn.Send("api sofia xmlstatus")
