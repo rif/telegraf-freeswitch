@@ -62,7 +62,7 @@ func (f *Fetcher) GetData() error {
 		if err != nil {
 			return fmt.Errorf("error sending status command: %v", err)
 		}
-		c, err = LoadStatusJSON(ev.Body)
+		c, err = LoadStatusText(ev.Body)
 		if err != nil || c.Status != "success" {
 			return fmt.Errorf("error parsing status command: %v %+v", err, c)
 		}
