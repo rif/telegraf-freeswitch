@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	dataParser    = regexp.MustCompile(`^sip:.+?@(.+:\d+)`)
+	dataParser    = regexp.MustCompile(`^sips?:.+?@(.+:\d+)`)
 	runningParser = regexp.MustCompile(`^RUNNING \((\d+)\)`)
 )
 
