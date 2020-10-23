@@ -64,9 +64,9 @@ freeswitch_profile_sessions,profile=dot50,ip=80.161.218.50 running=155
 ## Execd mode
 
 ``` toml
-# [[inputs.execd]]
+[[inputs.execd]]
 #   ## Program to run as daemon
-command = ["/usr/local/bin/telegraf-freeswitch -execd"]
+command = ["/usr/local/bin/telegraf-freeswitch", "-execd"]
 #
 #   ## Define how the process is signaled on each collection interval.
 #   ## Valid values are:
