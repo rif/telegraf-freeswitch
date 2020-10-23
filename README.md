@@ -104,7 +104,7 @@ freeswitch_profile_sessions,profile=dot50,ip=80.161.218.50 running=155
 
 ## Server mode
 
-```
+```toml
 ## Read flattened metrics from one or more JSON HTTP endpoints
 [[inputs.httpjson]]
 name_override = "freeswitch_sessions"
