@@ -33,7 +33,7 @@ Basically the server mode replaces the starting of the plugin process and freesw
 
 ## One shot mode
 
-```
+```toml
 [[inputs.exec]]
   ## Commands array
   commands = ["/usr/local/bin/telegraf-freeswitch -host 127.0.0.1 -port 8021 -pass ClueCon"]
@@ -51,6 +51,47 @@ Basically the server mode replaces the starting of the plugin process and freesw
 ###Example Output
 ```
 $ ./telegraf-freeswitch
+freeswitch_sessions active=1636,peak=2380,peak_5min=1740,total=1377928,rate_current=10,rate_max=300,rate_peak=234,rate_peak_5min=25
+freeswitch_profile_sessions,profile=dot51,ip=80.161.218.51 running=0
+freeswitch_profile_sessions,profile=dot48,ip=80.161.218.48 running=147
+freeswitch_profile_sessions,profile=dot52,ip=80.161.218.52 running=0
+freeswitch_profile_sessions,profile=dot47,ip=80.161.218.47 running=177
+freeswitch_profile_sessions,profile=dot49,ip=80.161.218.49 running=169
+freeswitch_profile_sessions,profile=external,ip=80.161.218.17 running=988
+freeswitch_profile_sessions,profile=dot50,ip=80.161.218.50 running=155
+```
+
+## Execd mode
+
+``` toml
+# [[inputs.execd]]
+#   ## Program to run as daemon
+command = ["/usr/local/bin/telegraf-freeswitch -execd"]
+#
+#   ## Define how the process is signaled on each collection interval.
+#   ## Valid values are:
+#   ##   "none"   : Do not signal anything.
+#   ##              The process must output metrics by itself.
+#   ##   "STDIN"   : Send a newline on STDIN.
+#   ##   "SIGHUP"  : Send a HUP signal. Not available on Windows.
+#   ##   "SIGUSR1" : Send a USR1 signal. Not available on Windows.
+#   ##   "SIGUSR2" : Send a USR2 signal. Not available on Windows.
+signal = "STDIN"
+#
+#   ## Delay before the process is restarted after an unexpected termination
+#   restart_delay = "10s"
+#
+#   ## Data format to consume.
+#   ## Each data format has its own unique set of configuration options, read
+#   ## more about them here:
+#   ## https://github.com/influxdata/telegraf/blob/master/docs/DATA_FORMATS_INPUT.md
+data_format = "influx"
+```
+
+###Example Output
+```
+$ ./telegraf-freeswitch -execd
+
 freeswitch_sessions active=1636,peak=2380,peak_5min=1740,total=1377928,rate_current=10,rate_max=300,rate_peak=234,rate_peak_5min=25
 freeswitch_profile_sessions,profile=dot51,ip=80.161.218.51 running=0
 freeswitch_profile_sessions,profile=dot48,ip=80.161.218.48 running=147

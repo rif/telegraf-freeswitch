@@ -3,11 +3,15 @@
 builds:
   - binary: telegraf-freeswitch
     goos:
-      - windows
-      - darwin
       - linux
     goarch:
       - amd64
+    flags:
+      - -a
+    ldflags:
+     - -s -w
+    env:
+      - CGO_ENABLED=0
 archive:
   format: tar.gz
   files:
